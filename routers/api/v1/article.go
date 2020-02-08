@@ -6,10 +6,10 @@ import (
 	"github.com/Unknwon/com"
 	"ggin/models"
 	"ggin/pkg/e"
-	"log"
 	"net/http"
 	"ggin/pkg/util"
 	"ggin/pkg/setting"
+	"ggin/pkg/logging"
 )
 
 // 获取单个文章
@@ -30,7 +30,7 @@ func GetArticle(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Fatalf(err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -66,7 +66,7 @@ func GetArticles(c *gin.Context) {
 		data["total"] = models.GetArticleTotal(maps)
 	} else {
 		for _, err := range valid.Errors {
-			log.Fatalf(err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -111,7 +111,7 @@ func AddArticle(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Fatal(err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -172,7 +172,7 @@ func EditArticle(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Fatalf(err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -195,7 +195,7 @@ func DelelteArticle(c *gin.Context) {
 		code = e.SUCCESS
 	} else {
 		for _, err := range valid.Errors {
-			log.Fatalf(err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{

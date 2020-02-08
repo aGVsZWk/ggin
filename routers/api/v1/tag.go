@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"log"
 	"github.com/gin-gonic/gin"
 	"github.com/Unknwon/com"
 	"ggin/pkg/e"
@@ -10,6 +9,7 @@ import (
 	"ggin/pkg/setting"
 	"net/http"
 	"github.com/astaxie/beego/validation"
+	"ggin/pkg/logging"
 )
 
 // 获取多个文章标签
@@ -60,7 +60,7 @@ func AddTag(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Fatal(err.Key, err.Message) // todo replace this with logging
+			logging.Info(err.Key, err.Message)
 		}
 	}
 
@@ -102,7 +102,7 @@ func EditTag(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Fatal(err.Key, err.Message) // todo replace this with logging
+			logging.Info(err.Key, err.Message)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -129,7 +129,7 @@ func DeleteTag(c *gin.Context) {
 		}
 	} else{
 		for _, err := range valid.Errors {
-			log.Fatal(err.Key, err.Message) // todo replace this with logging
+			logging.Info(err.Key, err.Message)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{

@@ -6,7 +6,7 @@ import (
 	"ggin/pkg/e"
 	"ggin/models"
 	"ggin/pkg/util"
-	"log"
+	"ggin/pkg/logging"
 	"net/http"
 )
 
@@ -39,7 +39,7 @@ func GetAuth(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Println(err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 
