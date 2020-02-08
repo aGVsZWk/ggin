@@ -6,6 +6,9 @@ import (
 	"ggin/routers/api/v1"
 	"ggin/routers/api"
 	"ggin/middleware/jwt"
+	_ "ggin/docs"
+	"github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
 func InitRouter() *gin.Engine {
@@ -13,7 +16,7 @@ func InitRouter() *gin.Engine {
 
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-
+	r.Use()
 	gin.SetMode(setting.RunMode)
 
 	//r.GET("/test", func(c *gin.Context) {
@@ -23,7 +26,7 @@ func InitRouter() *gin.Engine {
 	//})
 
 	r.GET("/auth", api.GetAuth)
-
+	r.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	apiv1 := r.Group("/api/v1")
 	apiv1.Use(jwt.JWT())
 	{
@@ -47,7 +50,6 @@ func InitRouter() *gin.Engine {
 		// 删除指定文章
 		apiv1.DELETE("articles/:id", v1.DelelteArticle)
 	}
-
 
 	return r
 }
