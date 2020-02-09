@@ -26,6 +26,7 @@ func GetTags(c *gin.Context) {
 		state = com.StrTo(arg).MustInt()
 		maps["state"] = state
 	}
+	maps["deleted_on"] = 0
 	code := e.SUCCESS
 	data["lists"] = models.GetTags(util.GetPage(c), setting.PageSize, maps)
 	data["total"] = models.GetTagTotal(maps)

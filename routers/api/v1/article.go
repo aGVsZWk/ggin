@@ -57,8 +57,8 @@ func GetArticles(c *gin.Context) {
 		maps["tag_id"] = tagId
 		valid.Range(state, 0, 1, "state").Message("标签ID必须大于0")
 	}
-
 	code := e.INVALID_PARAMS
+	maps["deleted_on"] = 0
 	if ! valid.HasErrors() {
 		code = e.SUCCESS
 

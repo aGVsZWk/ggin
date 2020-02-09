@@ -36,7 +36,7 @@ func GetTagTotal(maps interface{}) (count int) {
 
 func ExistTagByName(name string) bool {
 	var tag Tag
-	db.Select("id").Where("name = ?", name).First(&tag)
+	db.Select("id").Where("name = ? AND delete_on = ?", name, 0).First(&tag)
 	if tag.ID > 0 {
 		return true
 	}
@@ -54,7 +54,7 @@ func AddTag(name string, state int, createdBy string) bool {
 
 func ExistTagByID(id int) bool {
 	var tag Tag
-	db.Select("id").Where("id = ?", id).First(&tag)
+	db.Select("id").Where("id = ? AND delete_on = ?", id, 0).First(&tag)
 	if tag.ID > 0 {
 		return true
 	}
@@ -62,7 +62,7 @@ func ExistTagByID(id int) bool {
 }
 
 func EditTag(id int, data interface{}) bool {
-	db.Model(&Tag{}).Where("id = ?", id).Update(data)
+	db.Model(&Tag{}).Where("id = ? AND delete_on = ?", id, 0).Update(data)
 	return true
 }
 
