@@ -9,6 +9,8 @@ import (
 	_ "ggin/docs"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	"net/http"
+	"ggin/pkg/upload"
 )
 
 func InitRouter() *gin.Engine {
@@ -24,6 +26,8 @@ func InitRouter() *gin.Engine {
 	//		"message": "test",
 	//	})
 	//})
+
+	r.StaticFS("upload/images", http.Dir(upload.GetImageFullPath()))
 
 	r.GET("/auth", api.GetAuth)
 	r.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

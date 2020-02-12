@@ -11,12 +11,13 @@ type Article struct {
 	TagID int `json:"tag_id" gorm:"index"`
 	Tag   Tag `json:"tag"`
 
-	Title      string `json:"title"`
-	Desc       string `json:"desc"`
-	Content    string `json:"content"`
-	CreatedBy  string `json:"created_by"`
-	ModifiedBy string `json:"modified_by"`
-	State      int    `json:"state"`
+	Title         string `json:"title"`
+	Desc          string `json:"desc"`
+	Content       string `json:"content"`
+	CreatedBy     string `json:"created_by"`
+	ModifiedBy    string `json:"modified_by"`
+	State         int    `json:"state"`
+	CoverImageUrl string `json:"cover_image_url"`
 }
 
 //func (article *Article) BeforeCreate(scope *gorm.Scope) error {
@@ -31,7 +32,7 @@ type Article struct {
 
 func ExistArticleByID(id int) bool {
 	var article Article
-	db.Select("id").Where("id = ? AND deleted_on = ?" , id, 0).First(&article)
+	db.Select("id").Where("id = ? AND deleted_on = ?", id, 0).First(&article)
 	if article.ID > 0 {
 		return true
 	}
@@ -44,7 +45,7 @@ func GetArticleTotal(maps interface{}) (count int) {
 }
 
 func GetArticle(id int) (article Article) {
-	db.Where("id = ? AND delete_on = ?", id, 0).First(&article)
+	db.Where("id = ? AND deleted_on = ?", id, 0).First(&article)
 	db.Model(&article).Related(&article.Tag)
 	return
 }
@@ -55,18 +56,19 @@ func GetArticles(pageNum, pageSize int, maps interface{}) (articles []Article) {
 }
 
 func EditArticle(id int, data interface{}) bool {
-	db.Model(&Article{}).Where("id = ? AND delete_on = ?", id, 0).Update(data)
+	db.Model(&Article{}).Where("id = ? AND deleted_on = ?", id, 0).Update(data)
 	return true
 }
 
 func AddArticle(data map[string]interface{}) bool {
 	db.Create(&Article{
-		TagID:     data["tag_id"].(int),
-		Title:     data["title"].(string),
-		Desc:      data["desc"].(string),
-		Content:   data["content"].(string),
-		CreatedBy: data["created_by"].(string),
-		State:     data["state"].(int),
+		TagID:         data["tag_id"].(int),
+		Title:         data["title"].(string),
+		Desc:          data["desc"].(string),
+		Content:       data["content"].(string),
+		CreatedBy:     data["created_by"].(string),
+		CoverImageUrl: data["cover_image_url"].(string),
+		State:         data["state"].(int),
 	})
 
 	return true
@@ -77,8 +79,7 @@ func DeleteArticle(id int) bool {
 	return true
 }
 
-
 func CleanAllArticle() bool {
-	db.Unscoped().Where("deleted_on = ?", 0).Delete(&Article{})		// 硬删除使用 Unscoped()，GORM 的约定
+	db.Unscoped().Where("deleted_on = ?", 0).Delete(&Article{}) // 硬删除使用 Unscoped()，GORM 的约定
 	return true
 }
