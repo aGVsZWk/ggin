@@ -6,8 +6,8 @@ import (
 	"ggin/pkg/e"
 	"ggin/models"
 	"ggin/pkg/util"
-	"ggin/pkg/logging"
 	"net/http"
+	"ggin/pkg/app"
 )
 
 type auth struct {
@@ -16,36 +16,34 @@ type auth struct {
 }
 
 func GetAuth(c *gin.Context) {
+	appG := app.Gin{C: c}
+	valid := validation.Validation{}
+
 	username := c.Query("username")
 	password := c.Query("password")
 
-	valid := validation.Validation{}
 	a := auth{Username: username, Password: password}
 	ok, _ := valid.Valid(&a)
-	data := make(map[string]interface{})
-	code := e.INVALID_PARAMS
-	if ok {
-		isExist := models.CheckAuth(username, password)
-		if isExist {
-			token, err := util.GenerateToken(username, password)
-			if err != nil {
-				code = e.ERROR_AUTH_TOKEN
-			} else {
-				data["token"] = token
-				code = e.SUCCESS
-			}
-		} else {
-			code = e.ERROR_AUTH
-		}
-	} else {
-		for _, err := range valid.Errors {
-			logging.Info(err.Key, err.Message)
-		}
-	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": code,
-		"msg" : e.GetMsg(code),
-		"data": data,
+	if !ok {
+		app.MarkErrors(valid.Errors)
+		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
+		return
+	}
+	isExist, err := models.CheckAuth(username, password)
+	if err != nil {
+		appG.Response(http.StatusOK, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
+		return
+	}
+	if !isExist {
+		appG.Response(http.StatusOK, e.ERROR_AUTH, nil)
+		return
+	}
+	token, err := util.GenerateToken(username, password)
+	if err != nil {
+		appG.Response(http.StatusOK, e.ERROR_AUTH_TOKEN, nil)
+	}
+	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
+		"token": token,
 	})
 }
